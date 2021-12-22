@@ -1,37 +1,32 @@
 import {
-  HeartIcon,
   HomeIcon,
   LibraryIcon,
   PlusCircleIcon,
   RssIcon,
-  SearchIcon
+  SearchIcon,
 } from "@heroicons/react/outline";
+import { HeartIcon } from '@heroicons/react/solid'
 import { signOut, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { playlistIdState } from "../atoms/playlistAtom";
-import useSpotify from '../hooks/useSpotify';
+import useSpotify from "../hooks/useSpotify";
 function Sidebar() {
   const { data: session, status } = useSession();
-  const [playlists, setPlaylists] = useState([])
-  const [playlistId, setPlaylistId] = useRecoilState(playlistIdState)
-  const spotifyApi = useSpotify()
+  const [playlists, setPlaylists] = useState([]);
+  const [playlistId, setPlaylistId] = useRecoilState(playlistIdState);
+  const spotifyApi = useSpotify();
   useEffect(() => {
-    if(spotifyApi.getAccessToken()) {
-      spotifyApi.getUserPlaylists().then((data) => {setPlaylists(data.body.items)})
+    if (spotifyApi.getAccessToken()) {
+      spotifyApi.getUserPlaylists().then((data) => {
+        setPlaylists(data.body.items);
+      });
     }
-  }, [session, spotifyApi])
+  }, [session, spotifyApi]);
 
-console.log(playlistId)
   return (
-    <div className="text-gray-500 p-5 text-sm border-r- border-gray-900 overflow-y-scroll h-screen scrollbar-hide border-r border-gray-900">
+    <div className="text-gray-500 p-5 text-xs lg:text-sm border-r- border-gray-900 overflow-y-scroll h-screen scrollbar-hide border-r border-gray-900 sm:max-w-[12rem] sm:max-w-[15rem] hidden md:inline-flex pb-36">
       <div className="space-y-4">
-        <button
-          onClick={() => signOut()}
-          className="flex items-center space-x-2 hover:text-white"
-        >
-          <p>Log out</p>
-        </button>
         <button className="flex items-center space-x-2 hover:text-white">
           <HomeIcon className="h-5 w-5" />
           <p>Home</p>
@@ -49,21 +44,27 @@ console.log(playlistId)
           <PlusCircleIcon className="h-5 w-5" />
           <p>Create Playlist</p>
         </button>
-        <button className="flex items-center space-x-2 hover:text-white">
-          <HeartIcon className="h-5 w-5" />
+        <button className="flex items-center space-x-2  hover:text-white">
+          <HeartIcon className="h-5 w-5 text-blue-500" />
           <p>Liked Songs</p>
         </button>
         <button className="flex items-center space-x-2 hover:text-white">
-          <RssIcon className="h-5 w-5" />
+          <RssIcon className="h-5 w-5 text-green-500" />
           <p>Your episodes</p>
         </button>
         <hr className="border-t-[0.1px] border-gray-900" />
 
         {/* Custom Playlists */}
-        {playlists?.map(playlist => {
+        {playlists?.map((playlist) => {
           return (
-            <p onClick={() => setPlaylistId(playlist.id)} className="cursor-pointer hover:text-white" key={playlist?.id}>{playlist?.name}</p>
-          )
+            <p
+              onClick={() => setPlaylistId(playlist.id)}
+              className="cursor-pointer hover:text-white"
+              key={playlist?.id}
+            >
+              {playlist?.name}
+            </p>
+          );
         })}
       </div>
     </div>

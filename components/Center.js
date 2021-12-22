@@ -1,9 +1,10 @@
 import { ChevronDownIcon } from "@heroicons/react/outline";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { playlistIdState, playlistState } from "../atoms/playlistAtom";
 import useSpotify from "../hooks/useSpotify";
+import Songs from "./Songs";
 
 
 const colors = [
@@ -29,16 +30,16 @@ function Center() {
   }, [playlistId])
 
   useEffect(() => {
-    console.log(spotifyApi)
     spotifyApi.getPlaylist(playlistId).then((data) => {
       setPlaylist(data.body)
     }).catch(err => console.log(`Something went wrong ${err}`))
   }, [playlistId, spotifyApi])
 
+
   return (
-    <div className="flex-grow ">
+    <div className="flex-grow h-screen overflow-y-scroll scrollbar-hide">
       <header className="absolute top-5 right-8">
-        <div className="flex bg-red-400 items-center bg-black space-x-3 opacity-90 hover:opacity-80 cursor-pointer rounded-full p-1 pr-2">
+        <div className="flex bg-black text-white items-center bg-black space-x-3 opacity-90 hover:opacity-80 cursor-pointer rounded-full p-1 pr-2" onClick={signOut}>
           <img
             className="rounded-full w-10 h-10"
             src={session?.user?.image}
@@ -49,14 +50,18 @@ function Center() {
         </div>
       </header>
       <section
-        className={`flex ${color} items-end space-x-7 bg-gradient-to-b to-black from-red-500 h-80 text-white p-8`}
+        className={`flex ${color} items-end space-x-7 bg-gradient-to-b to-black h-80 text-white p-8`}
       >
-        <img className="w-44 h-44 shadow-2xl" src={playlist?.images?.[0]?.url} />
+        {playlist?.images?.[0] && <img className="w-44 h-44 shadow-2xl" src={playlist?.images?.[0]?.url} />}
         <div>
           <p>PLAYLIST</p>
           <h1 className="text-2xl md:text-3xl xl:text-5xl font-bold">{playlist?.name}</h1>
         </div>
       </section>
+
+      <div>
+        <Songs />
+      </div>
     </div>
   );
 }
